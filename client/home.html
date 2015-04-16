@@ -1,0 +1,18 @@
+<template name="home">
+	{{#if currentUser}}
+		{{> loggedIn}}
+	{{else}}
+		{{> notLoggedIn}}
+	{{/if}}
+</template>
+
+<template name="notLoggedIn">
+	<div>
+		<h1>Welcome to Love Letter.</h1>
+		<p>Log in or sign up using the top navigation to get started.</p>
+	</div>
+</template>
+
+<template name="loggedIn">
+	Logged in.
+</template>
