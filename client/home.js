@@ -11,7 +11,7 @@ Template.loggedIn.helpers({
 Template.loggedIn.events({
 	'click button': function(){
 		console.log("clicked");
-	    Meteor.call('createGame', function (error, result) {
+	    Meteor.call('createGame', Meteor.userId(), function (error, result) {
 	        Session.set("createdGameId",result);
 	    });
 	}

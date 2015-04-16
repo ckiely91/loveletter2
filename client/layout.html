@@ -24,9 +24,20 @@
 
 	<div id="main" class="container">
 		{{#if loggingIn}}
-		<h1>Logging in...</h1>
+		<h1>Loading...</h1>
 		{{else}}
-			{{> yield}}
+			{{#if currentUser}}
+				{{> yield}}
+			{{else}}
+				{{> notLoggedIn}}
+			{{/if}}
 		{{/if}}
+	</div>
+</template>
+
+<template name="notLoggedIn">
+	<div>
+		<h1>Welcome to Love Letter.</h1>
+		<p>Log in or sign up using the top navigation to get started.</p>
 	</div>
 </template>

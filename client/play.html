@@ -1,3 +1,27 @@
 <template name="play">
-	This is a game page.
+	{{#if inProgress}}
+	<!-- show game stuff here -->
+	{{else}}
+		{{#if lobby}}
+			<!-- show lobby stuff here -->
+			{{> lobby}}
+		{{else}}
+			<!-- show game results here -->
+		{{/if}}
+	{{/if}}
+</template>
+
+<template name="lobby">
+<h3>Players in game</h3>
+<ul>{{#each currentTurn}}
+	<li>{{username this}}</li>
+	{{/each}}
+</ul>
+{{#if gameFull ..}}
+		Game is full!
+	{{else}}
+		{{#unless alreadyInGame ..}}
+			<button id="joingame">Join game</button>
+		{{/unless}}
+{{/if}}
 </template>
