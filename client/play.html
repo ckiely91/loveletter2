@@ -43,9 +43,15 @@
 <template name="game">
 	{{> guardModal}}
 	{{> priestModal}}
+	{{> baronModal}}
+	{{> princeModal}}
+	{{> kingModal}}
 	{{> playerTurn}}
+	{{#if eliminated}}{{> eliminatedPlayers}}{{/if}}
+	{{#if protected}}{{> protectedPlayers}}{{/if}}
 	{{> deck}}
-	{{> hand}}
+	{{> discard}}
+	{{#unless isEliminated}}{{> hand}}{{/unless}}
 </template>
 
 <template name="playerTurn">
@@ -59,6 +65,24 @@
 	{{/each}}
 </ul>
 </div>
+</template>
+
+<template name="eliminatedPlayers">
+<h3>Eliminated players</h3>
+<ul>
+{{#each eliminated}}
+	<li>{{username this}}</li>
+{{/each}}
+</ul>
+</template>
+
+<template name="protectedPlayers">
+<h3>Protected by Handmaid</h3>
+<ul>
+{{#each protected}}
+	<li>{{username this}}</li>
+{{/each}}
+</ul>
 </template>
 
 <template name="deck">
@@ -81,6 +105,16 @@
 			</div>
 		{{/each}}
 	</div>
+</template>
+
+<template name="discard">
+<div id="discard">
+	<h2>Discard</h2>
+	<div class="card {{lastDiscarded.type}}">
+		<div>{{lastDiscarded.value}}</div>
+		<div>{{#if lastDiscarded.type}}{{lastDiscarded.type}}{{else}}Discards{{/if}}</div>
+	</div>
+</div>
 </template>
 
 <template name="gamelog">
@@ -173,6 +207,90 @@
 		        <button type="submit" class="btn btn-primary">Go!</button>
 	      	</form>
 	      	{{/if}}
+	      </div>
+	    </div>
+	</div>
+</div>
+</template>
+
+<template name="baronModal">
+	<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="baronModal" aria-hidden="true" id="baronModal">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+	        <h4 class="modal-title" id="baronModal">Play a Baron<a class="anchorjs-link" href="#baronModal"><span class="anchorjs-icon"></span></a></h4>
+	      </div>
+	      <div class="modal-body">
+	      	<form id="baronform">
+	      		<div class="form-group" >
+	      			<label for="playerselector">Select a player</label>
+		      		<div class="btn-group" id="playerselector" data-toggle="buttons" >
+		      			{{#each otherPlayers}}
+		                <label class="btn btn-default {{#if protected .. this}}disabled{{/if}}">
+		                    <input type="radio" value="{{this}}" name="{{username this}}" id="{{this}}" class="sr-only" /> {{username this}}{{#if protected .. this}} (protected by Handmaid){{/if}}
+		                </label>
+		                {{/each}}
+		            </div>
+		        </div>
+		        <button type="submit" class="btn btn-primary">Go!</button>
+	      	</form>
+	      </div>
+	    </div>
+	</div>
+</div>
+</template>
+
+<template name="princeModal">
+	<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="princeModal" aria-hidden="true" id="princeModal">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+	        <h4 class="modal-title" id="princeModal">Play a Prince<a class="anchorjs-link" href="#princeModal"><span class="anchorjs-icon"></span></a></h4>
+	      </div>
+	      <div class="modal-body">
+	      	<form id="princeform">
+	      		<div class="form-group" >
+	      			<label for="playerselector">Select a player</label>
+		      		<div class="btn-group" id="playerselector" data-toggle="buttons" >
+		      			{{#each currentTurn}}
+		                <label class="btn btn-default {{#if protected .. this}}disabled{{/if}}">
+		                    <input type="radio" value="{{this}}" name="{{username this}}" id="{{this}}" class="sr-only" /> {{username this}}{{#if protected .. this}} (protected by Handmaid){{/if}}
+		                </label>
+		                {{/each}}
+		            </div>
+		        </div>
+		        <button type="submit" class="btn btn-primary">Go!</button>
+	      	</form>
+	      </div>
+	    </div>
+	</div>
+</div>
+</template>
+
+<template name="kingModal">
+	<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="kingModal" aria-hidden="true" id="kingModal">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+	        <h4 class="modal-title" id="kingModal">Play a King<a class="anchorjs-link" href="#kingModal"><span class="anchorjs-icon"></span></a></h4>
+	      </div>
+	      <div class="modal-body">
+	      	<form id="kingform">
+	      		<div class="form-group" >
+	      			<label for="playerselector">Select a player</label>
+		      		<div class="btn-group" id="playerselector" data-toggle="buttons" >
+		      			{{#each otherPlayers}}
+		                <label class="btn btn-default {{#if protected .. this}}disabled{{/if}}">
+		                    <input type="radio" value="{{this}}" name="{{username this}}" id="{{this}}" class="sr-only" /> {{username this}}{{#if protected .. this}} (protected by Handmaid){{/if}}
+		                </label>
+		                {{/each}}
+		            </div>
+		        </div>
+		        <button type="submit" class="btn btn-primary">Go!</button>
+	      	</form>
 	      </div>
 	    </div>
 	</div>

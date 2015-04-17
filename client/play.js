@@ -48,6 +48,14 @@ Template.gamelog.helpers({
 	}
 });
 
+Template.game.helpers({
+	isEliminated: function() {
+		if (this.eliminated.indexOf(Meteor.userId()) > -1) {
+		return true;
+		} else { return false;}
+	}
+});
+
 Template.deck.events({
 	'click .card': function (evt, template) {
 
@@ -72,22 +80,59 @@ Template.deck.events({
 
 Template.hand.events({
 	'click .card': function (evt, template) {
-		var game = template.data;
+		var game = template.data,
+			card = this,
+			holdingCountess = Helpers.holdingCountess(game),
+			allPlayersProtected = Helpers.allPlayersProtected(game);
+		
+		console.log(allPlayersProtected);
 
 		if (game.yourTurn) {
 				if (game.players[Meteor.userId()].hand.length <= 1) {
 					alert("You need to draw a card first.");
 				} else {
 					if (this.type === "Guard") {
-						$('#guardModal').modal();		
+						if (allPlayersProtected == true) {
+							Meteor.call('playCard', template.data._id, Meteor.userId(), card);
+						} else {
+							$('#guardModal').modal();
+							return;	
+						}
 					} else if (this.type === "Priest") {
-						$('#priestModal').modal();	
+						if (allPlayersProtected == true) {
+							Meteor.call('playCard', template.data._id, Meteor.userId(), card);
+						} else {
+							$('#priestModal').modal();
+							return;
+						}
+					} else if (this.type === "Baron") {
+						$('#baronModal').modal();
+						return;
+					} else if (this.type === "Prince") {
+						if (holdingCountess == true) {
+							alert("You're holding the Countess, so you have to discard that instead. Sorry buddy.");
+							var countessCard = {"type":"Countess","value":7};
+							Meteor.call('playCard', template.data._id, Meteor.userId(), countessCard);
+						} else {
+							$('#princeModal').modal();
+							return;
+						}
+						
+					} else if (this.type === "King") {
+						if (holdingCountess == true) {
+							alert("You're holding the Countess, so you have to discard that instead. Sorry buddy.");
+							var countessCard = {"type":"Countess","value":7};
+							Meteor.call('playCard', template.data._id, Meteor.userId(), countessCard);
+						} else {
+							if (allPlayersProtected == true) {
+							Meteor.call('playCard', template.data._id, Meteor.userId(), card);
+							} else {
+								$('#kingModal').modal();
+								return;
+							}
+						}
 					} else {
 						Meteor.call('playCard', template.data._id, Meteor.userId(), this);
-					}
-
-					if (template.data.inProgress == true && template.data.lastTurn == true) {
-						Meteor.call('endGameEmptyDeck', template.data._id);
 					}
 				}
 			
@@ -161,4 +206,80 @@ Template.priestModal.events({
 	}
 });
 
+Template.baronModal.helpers({
+	otherPlayers : function () {
+			var otherplayers = this.currentTurn.slice(),
+				currentPlayerIndex = otherplayers.indexOf(Meteor.userId());
+			otherplayers.splice(currentPlayerIndex,1);
+			return otherplayers;
+		},
+	protected : function (parentContext, id) {
+		var protected = parentContext.protected;
+		if (protected.indexOf(id) > -1) {
+			return true;
+		} else { return false;}
+	},
+});
 
+
+Template.baronModal.events({
+	'submit form' : function (evt,template) {
+		evt.preventDefault();
+		var data = $("#baronform :input").serializeArray();
+		var targetPlayerId = data[0].value,
+			baron = {"type":"Baron","value":"3"};
+			
+		Meteor.call('playCard', template.data._id, Meteor.userId(), baron, 0, targetPlayerId);
+		$('#baronModal').modal('hide');
+	}
+});
+
+Template.princeModal.helpers({
+	protected : function (parentContext, id) {
+		var protected = parentContext.protected;
+		if (protected.indexOf(id) > -1) {
+			return true;
+		} else { return false;}
+	},
+});
+
+
+Template.princeModal.events({
+	'submit form' : function (evt,template) {
+		evt.preventDefault();
+		var data = $("#princeform :input").serializeArray();
+		var targetPlayerId = data[0].value,
+			prince = {"type":"Prince","value":"5"};
+			
+		Meteor.call('playCard', template.data._id, Meteor.userId(), prince, 0, targetPlayerId);
+		$('#princeModal').modal('hide');
+	}
+});
+
+Template.kingModal.helpers({
+	otherPlayers : function () {
+			var otherplayers = this.currentTurn.slice(),
+				currentPlayerIndex = otherplayers.indexOf(Meteor.userId());
+			otherplayers.splice(currentPlayerIndex,1);
+			return otherplayers;
+		},
+	protected : function (parentContext, id) {
+		var protected = parentContext.protected;
+		if (protected.indexOf(id) > -1) {
+			return true;
+		} else { return false;}
+	},
+});
+
+
+Template.kingModal.events({
+	'submit form' : function (evt,template) {
+		evt.preventDefault();
+		var data = $("#kingform :input").serializeArray();
+		var targetPlayerId = data[0].value,
+			king = {"type":"King","value":"6"};
+			
+		Meteor.call('playCard', template.data._id, Meteor.userId(), king, 0, targetPlayerId);
+		$('#kingModal').modal('hide');
+	}
+});
