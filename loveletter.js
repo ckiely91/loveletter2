@@ -13,4 +13,8 @@ if (Meteor.isServer) {
 if (Meteor.isClient) {
 	Meteor.subscribe('games');
 	Meteor.subscribe('users');
+
+	Template.registerHelper("username", function(id) {
+	return Meteor.users.findOne(id).username;
+	});
 }

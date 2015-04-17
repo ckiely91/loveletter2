@@ -1,27 +1,180 @@
 <template name="play">
 	{{#if inProgress}}
-	<!-- show game stuff here -->
+	 {{> game}}
 	{{else}}
 		{{#if lobby}}
 			<!-- show lobby stuff here -->
 			{{> lobby}}
 		{{else}}
-			<!-- show game results here -->
+			
 		{{/if}}
 	{{/if}}
+	{{> gamelog}}
 </template>
 
 <template name="lobby">
+<h2>Game started by {{username owner}}</h2>
 <h3>Players in game</h3>
 <ul>{{#each currentTurn}}
 	<li>{{username this}}</li>
 	{{/each}}
 </ul>
 {{#if gameFull ..}}
-		Game is full!
+		Game is full! Waiting on the leader to start the game.
 	{{else}}
 		{{#unless alreadyInGame ..}}
-			<button id="joingame">Join game</button>
+			<button class="btn btn-default" id="joingame">Join game</button>
 		{{/unless}}
 {{/if}}
+{{#if isOwner ..}}
+	{{#if readyToStart ..}}
+	<button class="btn btn-default" id="startgame">Start game</button>
+	{{else}}
+	Waiting for more players...
+	{{/if}}
+{{/if}}
+
+<div id="invite">
+		Invite players to the game by giving them the following Game ID:
+		<input style="width:auto" class="form-control" type="text" value="{{_id}}" readonly>
+</div>
+</template>
+
+<template name="game">
+	{{> guardModal}}
+	{{> priestModal}}
+	{{> playerTurn}}
+	{{> deck}}
+	{{> hand}}
+</template>
+
+<template name="playerTurn">
+<div id="playerturn">
+<h2>Current turn</h2>
+<ul>
+	{{#each currentTurn}}
+		<li>
+			{{username this}}
+		</li>
+	{{/each}}
+</ul>
+</div>
+</template>
+
+<template name="deck">
+	<div id="deck">
+		<h2>Deck</h2>
+			<div class="card deck">
+				<div></div>
+				<div>Deck</div>
+			</div>
+	</div>
+</template>
+
+<template name="hand">
+	<div id="hand">
+		<h2>Hand</h2>
+		{{#each player.hand}}
+			<div class="card {{type}}">
+				<div>{{value}}</div>
+				<div>{{type}}</div>
+			</div>
+		{{/each}}
+	</div>
+</template>
+
+<template name="gamelog">
+	<h2>Game log</h2>
+	<ul>
+	{{#each gamelog}}
+		<li>{{friendlytime time}}: {{message}}</li>
+	{{/each}}
+	</ul>
+</template>
+
+<template name="guardModal">
+	<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="guardModal" aria-hidden="true" id="guardModal">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+	        <h4 class="modal-title" id="guardModal">Play a Guard<a class="anchorjs-link" href="#guardModal"><span class="anchorjs-icon"></span></a></h4>
+	      </div>
+	      <div class="modal-body">
+	      	<form id="guardform">
+	      		<div class="form-group" >
+	      			<label for="playerselector">Select a player</label>
+		      		<div class="btn-group" id="playerselector" data-toggle="buttons" >
+		      			{{#each otherPlayers}}
+		                <label class="btn btn-default {{#if protected .. this}}disabled{{/if}}">
+		                    <input type="radio" value="{{this}}" name="{{username this}}" id="{{this}}" class="sr-only" /> {{username this}}{{#if protected .. this}} (protected by Handmaid){{/if}}
+		                </label>
+		                {{/each}}
+		            </div>
+		        </div>
+		        <div class="form-group" >
+	      			<label for="cardselector">What card do they have?</label>
+		      		<div class="btn-group" id="cardselector" data-toggle="buttons">
+		                <label class="btn btn-default">
+		                    <input type="radio" value="2" name="Priest" id="Priest" class="sr-only"/> Priest
+		                </label>
+		                <label class="btn btn-default">
+		                    <input type="radio" value="3" name="Baron" id="Baron" class="sr-only"/> Baron
+		                </label>
+		                <label class="btn btn-default">
+		                    <input type="radio" value="4" name="Handmaid" id="Handmaid" class="sr-only"/> Handmaid
+		                </label>
+		                <label class="btn btn-default">
+		                    <input type="radio" value="5" name="Prince" id="Prince" class="sr-only"/> Prince
+		                </label>
+		                <label class="btn btn-default">
+		                    <input type="radio" value="6" name="King" id="King" class="sr-only"/> King
+		                </label>
+		                <label class="btn btn-default">
+		                    <input type="radio" value="7" name="Countess" id="Countess" class="sr-only"/> Countess
+		                </label>
+		                <label class="btn btn-default">
+		                    <input type="radio" value="8" name="Princess" id="Princess" class="sr-only"/> Princess
+		                </label>
+		            </div>
+		        </div>
+		        <button type="submit" class="btn btn-primary">Go!</button>
+	      	</form>
+	      </div>
+	    </div>
+	</div>
+</div>
+</template>
+
+<template name="priestModal">
+	<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="priestModal" aria-hidden="true" id="priestModal">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+	        <h4 class="modal-title" id="priestModal">Play a Priest<a class="anchorjs-link" href="#priestModal"><span class="anchorjs-icon"></span></a></h4>
+	      </div>
+	      <div class="modal-body">
+	      	{{#if result}}
+	      		<p class="lead">The other player has a <strong>{{result}}</strong>.</p>
+	      		<button id="priestok" class="btn btn-primary">Okay, got it</button>
+	      	{{else}}
+	      	<form id="priestform">
+	      		<div class="form-group" >
+	      			<label for="playerselector">Select a player</label>
+		      		<div class="btn-group" id="playerselector" data-toggle="buttons" >
+		      			{{#each otherPlayers}}
+		                <label class="btn btn-default {{#if protected .. this}}disabled{{/if}}">
+		                    <input type="radio" value="{{this}}" name="{{username this}}" id="{{this}}" class="sr-only" /> {{username this}}{{#if protected .. this}} (protected by Handmaid){{/if}}
+		                </label>
+		                {{/each}}
+		            </div>
+		        </div>
+		        <button type="submit" class="btn btn-primary">Go!</button>
+	      	</form>
+	      	{{/if}}
+	      </div>
+	    </div>
+	</div>
+</div>
 </template>

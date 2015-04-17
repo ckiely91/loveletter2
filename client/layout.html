@@ -24,7 +24,7 @@
 
 	<div id="main" class="container">
 		{{#if loggingIn}}
-		<h1>Loading...</h1>
+		<h1>{{> spinner}}</h1>
 		{{else}}
 			{{#if currentUser}}
 				{{> yield}}

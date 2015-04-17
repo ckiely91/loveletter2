@@ -1,1 +1,51 @@
-/* CSS declarations go here */
+.card {
+	background: #fff;
+	border: 1px solid #000;
+	display: inline-block;
+	margin: 10px;
+	width:112px;
+	height:175px;
+	text-align:center;
+	border-radius:5px;
+	color:#111;
+}
+
+.card div:nth-of-type(1) {
+	font-size: 28px;
+	  float: left;
+	  padding: 10px;
+	  position: relative;
+}
+
+.card div:nth-of-type(2) {
+	top: 75px;
+	  right: 16px;
+	  position: relative;
+	  font-size: 16px;
+}
+
+.Guard {background:#FFC873;}
+.Priest {background:#FFC3A4;}
+.Baron {background:#E1A4FF;}
+.Handmaid {background:#C2E4F9;}
+.Prince {background:#FFFEA7;}
+.King {background:#CBFFA7;}
+.Countess {background:#A7BCFF;}
+.Princess {background:#F8F9FF;}
+
+#deck .card {
+	background:#999;
+}
+
+#hand .card:hover, #deck .card:hover {
+	cursor: pointer;
+	transform: rotate(10deg);
+}
+
+#table, #hand {
+	min-height:250px;
+}
+
+#playerturn ul li:nth-of-type(1) {
+	font-weight:bold;
+}
