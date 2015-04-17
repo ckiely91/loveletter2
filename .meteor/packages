@@ -11,3 +11,5 @@ accounts-password
 ian:accounts-ui-bootstrap-3
 momentjs:moment
 sacha:spin
+sanjo:jasmine
+velocity:html-reporter
