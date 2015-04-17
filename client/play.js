@@ -106,8 +106,12 @@ Template.hand.events({
 							return;
 						}
 					} else if (this.type === "Baron") {
-						$('#baronModal').modal();
-						return;
+						if (allPlayersProtected == true) {
+							Meteor.call('playCard', template.data._id, Meteor.userId(), card);
+						} else {
+							$('#baronModal').modal();
+							return;
+						}
 					} else if (this.type === "Prince") {
 						if (holdingCountess == true) {
 							alert("You're holding the Countess, so you have to discard that instead. Sorry buddy.");

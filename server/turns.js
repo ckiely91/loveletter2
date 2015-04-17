@@ -158,6 +158,7 @@ Turns.playGuard = function (gameId, id, guess, target) {
 		console.log("Your opponent has that card!");
 		Turns.log(gameId, Meteor.users.findOne(id).username + " played a Guard against " + Meteor.users.findOne(target).username + " and guessed " + guess.type + ". They were right!");
 		Turns.eliminatePlayer(gameId,target);
+		Turns.changeCurrentPlayer(gameId);
 	} else {
     	console.log("Your opponent doesn't have that card!");
     	Turns.log(gameId, Meteor.users.findOne(id).username + " played a Guard against " + Meteor.users.findOne(target).username + " and guessed " + guess.type + ". They were wrong.");
@@ -205,10 +206,11 @@ Turns.playBaron = function (gameId, id, target, card) {
 	userHand = game.players[id].hand[0].value;
 
 	if (userHand > opponentHand) {
-		Turns.log(gameId, Meteor.users.findOne(id).username + " played a Baron and they had the high card.");
+		Turns.log(gameId, Meteor.users.findOne(id).username + " played a Baron against " + Meteor.users.findOne(target).username + " and " + Meteor.users.findOne(id).username + " had the high card.");
 		Turns.eliminatePlayer(gameId,target);
+		Turns.changeCurrentPlayer(gameId);
 	} else if (userHand < opponentHand) {
-		Turns.log(gameId, Meteor.users.findOne(id).username + " played a Baron and the opponent had the high card.");
+		Turns.log(gameId, Meteor.users.findOne(id).username + " played a Baron against " + Meteor.users.findOne(target).username + " and " + Meteor.users.findOne(target).username + " had the high card.");
 		Turns.eliminatePlayer(gameId,id);
 	} else {
 		console.log("Cards were equal!");
@@ -260,7 +262,6 @@ Turns.playKing = function (gameId, id, card, target) {
 
 	if (! target) {
 		Turns.log(gameId, Meteor.users.findOne(id).username + " played a King but everyone was protected by Handmaids!");
-    	Turns.changeCurrentPlayer(gameId);
     	return;
 	}
 
