@@ -130,14 +130,62 @@ Turns.eliminatePlayer = function (gameId,id) {
 	} 
 }
 
-Turns.endRound = function (gameId) {
-	var game = Games.findOne(gameId),
-		winner = game.currentTurn[0];
+Turns.endRound = function (gameId,win,tie) {
+	var game = Games.findOne(gameId);
+		
+	if (win) {
+		var winner = win;
+	} else if (tie) {
+		Turns.log(gameId, "There was a tie.");
+		Games.update(gameId,{$set:{"betweenRounds":true}});
+		return;
+	} else {
+		// must be only one player left
+		var winner = game.currentTurn[0];
+	}
 
 	//give winner 1 point
+	Turns.log(gameId, Meteor.users.findOne(winner).username + " won the round.")
 	Games.update({"_id":gameId,"scores.id":winner},{$inc:{"scores.$.score":1}});
 	Games.update(gameId,{$set:{"betweenRounds":true}});
 	
+}
+
+Turns.endRoundEmptyDeck = function(gameId) {
+	var game = Games.findOne(gameId),
+		playerList = game.currentTurn,
+		playerHands = [],
+		winners = [],
+		topValue = 0;
+
+	Turns.log(gameId, "Round finished.")
+
+	for (var i = playerList.length - 1; i >= 0; i--) {
+		var hand = game.players[playerList[i]].hand,
+			handValue = {"id": playerList[i], "value": hand[0].value };
+		Turns.log(gameId, Meteor.users.findOne(playerList[i]).username + " had a " + hand[0].type + " worth " + hand[0].value + ".");
+		playerHands.push(handValue);
+	};
+
+	for (var i = playerHands.length - 1; i >= 0; i--) {
+		if (playerHands[i].value > topValue) {
+			topValue = playerHands[i].value;
+			winners = [playerHands[i]];
+		} else if (playerHands[i].value == topValue) {
+			winners.push(playerHands[i].id);
+		}
+	};
+
+	if (winners.length == 1) {
+		Turns.endRound(gameId,winners[0]);
+	} else {
+		Turns.endRound(gameId, 0, winners);
+	}
+}
+
+Turns.deckEmpty = function (gameId) {
+	Turns.log(gameId,"The deck is now empty. Final turn!");
+	Games.update(gameId, {$set: {"lastTurn":true}});
 }
 
 Turns.startRound = function (gameId) {

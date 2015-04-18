@@ -69,6 +69,7 @@ GameFactory.createNewRound = function (gameId) {
 		currentTurn: playerIds,
 		protected: [],
 		eliminated: [],
+		lastTurn: false,
 		betweenRounds: false
 	}
 }

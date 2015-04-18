@@ -20,9 +20,6 @@ Meteor.methods({
         )
         return fut.wait();
     },
-    'startRound': function(gameId) {
-        Turns.startRound(gameId);
-    },
     'joinGame': function(gameId,id) {
         var game = Games.findOne(gameId);
             players = game.currentTurn;
@@ -49,6 +46,10 @@ Meteor.methods({
 
         var round = GameFactory.createFirstRound(gameId,players[0]);
         Games.update(gameId,{$set:round});
+        Turns.log(gameId,"New round started.");
+    },
+    'startRound': function(gameId) {
+        Turns.startRound(gameId);
     },
     takeCard: function (gameId, id) {
         var game = Games.findOne(gameId),
@@ -103,4 +104,10 @@ Meteor.methods({
             return;
         };
     },
+    deckEmpty: function (gameId) {
+        Turns.deckEmpty(gameId);
+    },
+    endRoundEmptyDeck: function (gameId) {
+        Turns.endRoundEmptyDeck(gameId);
+    }
 });
