@@ -39,6 +39,13 @@ Template.lobby.events({
 	}
 })
 
+Template.betweenRounds.events({
+	'click #startRound': function(evt,template) {
+		Meteor.call('startRound',template.data._id);
+	}
+})
+
+
 Template.gamelog.helpers({
 	gamelog : function() {
 		return this.log.slice(-10).reverse();

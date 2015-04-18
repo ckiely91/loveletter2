@@ -26,7 +26,8 @@ GameFactory.createFirstRound = function (gameId, firstPlayer) {
 	deck = allcards[0],
 	facedown = allcards[1],
 	faceup = allcards[2],
-	players = createPlayers(playerIds);
+	players = createPlayers(playerIds),
+	scores  = createScores(playerIds);
 
 	GameFactory.dealPlayers(players, deck);
 
@@ -38,9 +39,39 @@ GameFactory.createFirstRound = function (gameId, firstPlayer) {
 		currentTurn: playerIds,
 		inProgress: true,
 		lobby: false,
-		protected: []
+		protected: [],
+		scores: scores
 	}
 };
+
+GameFactory.createNewRound = function (gameId) {
+	var game = Games.findOne(gameId),
+		playerIds = game.eliminated,
+		winner = game.currentTurn[0];
+
+	//shuffle player turn order
+	playerIds = _.shuffle(playerIds);
+	playerIds.unshift(winner);
+
+	var allcards = createLLDeck(gameId, playerIds.length),
+		deck = allcards[0],
+		facedown = allcards[1],
+		faceup = allcards[2],
+		players = createPlayers(playerIds);
+
+	GameFactory.dealPlayers(players, deck);
+
+	return {
+		deck: deck,
+		faceup: faceup,
+		facedown: facedown,
+		players: players,
+		currentTurn: playerIds,
+		protected: [],
+		eliminated: [],
+		betweenRounds: false
+	}
+}
 
 function createPlayers(ids) {
 	var o = {};
@@ -52,6 +83,17 @@ function createPlayers(ids) {
 	});
 
 	return o;
+}
+
+function createScores(ids) {
+	var array = [];
+
+	ids.forEach(function (id) {
+		var o = {"id":id,"score":0};
+		array.push(o);
+	});
+
+	return array;
 }
 
 GameFactory.dealPlayers = function (players,deck) {

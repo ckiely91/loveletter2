@@ -134,9 +134,18 @@ Turns.endRound = function (gameId) {
 	var game = Games.findOne(gameId),
 		winner = game.currentTurn[0];
 
-	var object = {};
-	object["scores." + id] = 1;
-	Games.update(gameId, {$inc: object});
+	//give winner 1 point
+	Games.update({"_id":gameId,"scores.id":winner},{$inc:{"scores.$.score":1}});
+	Games.update(gameId,{$set:{"betweenRounds":true}});
+	
+}
+
+Turns.startRound = function (gameId) {
+	//start a new round
+	Turns.log(gameId,"New round started.");
+	var newGame = GameFactory.createNewRound(gameId);
+	Games.update(gameId,{$set:newGame});
+	
 }
 
 Turns.playGuard = function (gameId, id, guess, target) {

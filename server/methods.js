@@ -20,6 +20,9 @@ Meteor.methods({
         )
         return fut.wait();
     },
+    'startRound': function(gameId) {
+        Turns.startRound(gameId);
+    },
     'joinGame': function(gameId,id) {
         var game = Games.findOne(gameId);
             players = game.currentTurn;

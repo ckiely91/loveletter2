@@ -1,6 +1,10 @@
 <template name="play">
 	{{#if inProgress}}
-	 {{> game}}
+		{{#if betweenRounds}}
+			{{> betweenRounds}}
+		{{else}}
+		 	{{> game}}
+	 	{{/if}}
 	{{else}}
 		{{#if lobby}}
 			<!-- show lobby stuff here -->
@@ -40,15 +44,42 @@
 </div>
 </template>
 
+<template name="betweenRounds">
+	<button id="startRound">Start new round</button>
+</template>
+
+<template name="scores">
+<div id="scores">
+	<h2>Scores</h2>
+	<table class="table">
+	<thead>
+	<tr><th>Username</th><th>Score</th></tr>
+	</thead>
+	<tbody>
+		{{#each scores}}
+			<tr><td>{{username this.id}}</td><td>{{this.score}}</td></tr>
+		{{/each}}
+	</tbody>
+	</table>
+</div>
+</template>
+
 <template name="game">
 	{{> guardModal}}
 	{{> priestModal}}
 	{{> baronModal}}
 	{{> princeModal}}
 	{{> kingModal}}
-	{{> playerTurn}}
-	{{#if eliminated}}{{> eliminatedPlayers}}{{/if}}
-	{{#if protected}}{{> protectedPlayers}}{{/if}}
+	<div class="row">
+		<div class="col-md-6">
+			{{> scores}}
+		</div>
+		<div class="col-md-6">
+			{{> playerTurn}}
+			{{#if eliminated}}{{> eliminatedPlayers}}{{/if}}
+			{{#if protected}}{{> protectedPlayers}}{{/if}}
+		</div>
+	</div>
 	{{> deck}}
 	{{> discard}}
 	{{#unless isEliminated}}{{> hand}}{{/unless}}
