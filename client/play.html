@@ -1,4 +1,9 @@
 <template name="play">
+	{{> guardModal}}
+	{{> priestModal}}
+	{{> baronModal}}
+	{{> princeModal}}
+	{{> kingModal}}
 	{{#if inProgress}}
 		{{#if betweenRounds}}
 			{{> betweenRounds}}
@@ -65,11 +70,6 @@
 </template>
 
 <template name="game">
-	{{> guardModal}}
-	{{> priestModal}}
-	{{> baronModal}}
-	{{> princeModal}}
-	{{> kingModal}}
 	<div class="row">
 		<div class="col-md-6">
 			{{> scores}}

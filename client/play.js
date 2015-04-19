@@ -183,11 +183,13 @@ Template.guardModal.events({
 		Meteor.call('playCard', template.data._id, Meteor.userId(), guard, card, targetPlayerId);
 		evt.preventDefault();
 		document.getElementById("guardform").reset();
-		$('#guardModal').modal('hide');
+		
 
 		if (template.data.lastTurn == true) {
 			Meteor.call('endRoundEmptyDeck', template.data._id);
-		}
+		} 
+
+		$('#guardModal').modal('hide');
 	}
 });
 
@@ -222,7 +224,7 @@ Template.priestModal.events({
 	    });
 
 	    if (template.data.lastTurn == true) {
-	    	$('#priestModal').modal('hide');
+			$('#priestModal').modal('hide');
 			Meteor.call('endRoundEmptyDeck', template.data._id);
 		}
 	},
@@ -279,11 +281,12 @@ Template.princeModal.events({
 			prince = {"type":"Prince","value":"5"};
 			
 		Meteor.call('playCard', template.data._id, Meteor.userId(), prince, 0, targetPlayerId);
-		$('#princeModal').modal('hide');
 
 		if (template.data.lastTurn == true) {
 			Meteor.call('endRoundEmptyDeck', template.data._id);
 		}
+
+		$('#princeModal').modal('hide');
 	}
 });
 
@@ -312,10 +315,11 @@ Template.kingModal.events({
 			
 		Meteor.call('playCard', template.data._id, Meteor.userId(), king, 0, targetPlayerId);
 		document.getElementById("kingform").reset();
-		$('#kingModal').modal('hide');
 
 		if (template.data.lastTurn == true) {
 			Meteor.call('endRoundEmptyDeck', template.data._id);
-		}
+		} 
+
+		$('#kingModal').modal('hide');
 	}
 });
