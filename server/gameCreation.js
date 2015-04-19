@@ -44,10 +44,17 @@ GameFactory.createFirstRound = function (gameId, firstPlayer) {
 	}
 };
 
-GameFactory.createNewRound = function (gameId) {
+GameFactory.createNewRound = function (gameId,winner) {
 	var game = Games.findOne(gameId),
-		playerIds = game.eliminated,
-		winner = game.currentTurn[0];
+		playerIds = game.eliminated;
+
+	if (! winner) {
+		var winner = game.currentTurn[0];
+	}
+		
+	playerIds = playerIds.concat(game.currentTurn);
+	var index = playerIds.indexOf(winner);
+	playerIds.splice(index,1);
 
 	//shuffle player turn order
 	playerIds = _.shuffle(playerIds);
@@ -114,7 +121,7 @@ function createLLDeck (gameId, playerNo) {
 			{ type: 'Guard', value: 1 },
 			{ type: 'Priest', value: 2 },
 			{ type: 'Priest', value: 2 },
-			{ type: 'Baron', value: 3 },
+			/*{ type: 'Baron', value: 3 },
 			{ type: 'Baron', value: 3 },
 			{ type: 'Handmaid', value: 4 },
 			{ type: 'Handmaid', value: 4 },
@@ -122,7 +129,7 @@ function createLLDeck (gameId, playerNo) {
 			{ type: 'Prince', value: 5 },
 			{ type: 'King', value: 6 },
 			{ type: 'Countess', value: 7 },
-			{ type: 'Princess', value: 8 }
+			{ type: 'Princess', value: 8 }*/
 			];
 	cards = _.shuffle(cards);
 

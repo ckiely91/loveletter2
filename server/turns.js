@@ -170,7 +170,7 @@ Turns.endRoundEmptyDeck = function(gameId) {
 	for (var i = playerHands.length - 1; i >= 0; i--) {
 		if (playerHands[i].value > topValue) {
 			topValue = playerHands[i].value;
-			winners = [playerHands[i]];
+			winners = [playerHands[i].id];
 		} else if (playerHands[i].value == topValue) {
 			winners.push(playerHands[i].id);
 		}

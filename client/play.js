@@ -105,18 +105,21 @@ Template.hand.events({
 							Meteor.call('playCard', template.data._id, Meteor.userId(), card);
 						} else {
 							$('#guardModal').modal();
+							return;
 						}
 					} else if (this.type === "Priest") {
 						if (allPlayersProtected == true) {
 							Meteor.call('playCard', template.data._id, Meteor.userId(), card);
 						} else {
 							$('#priestModal').modal();
+							return;
 						}
 					} else if (this.type === "Baron") {
 						if (allPlayersProtected == true) {
 							Meteor.call('playCard', template.data._id, Meteor.userId(), card);
 						} else {
 							$('#baronModal').modal();
+							return;
 						}
 					} else if (this.type === "Prince") {
 						if (holdingCountess == true) {
@@ -125,6 +128,7 @@ Template.hand.events({
 							Meteor.call('playCard', template.data._id, Meteor.userId(), countessCard);
 						} else {
 							$('#princeModal').modal();
+							return;
 						}
 						
 					} else if (this.type === "King") {
@@ -137,6 +141,7 @@ Template.hand.events({
 							Meteor.call('playCard', template.data._id, Meteor.userId(), card);
 							} else {
 								$('#kingModal').modal();
+								return;
 							}
 						}
 					} else {
@@ -179,6 +184,10 @@ Template.guardModal.events({
 		evt.preventDefault();
 		document.getElementById("guardform").reset();
 		$('#guardModal').modal('hide');
+
+		if (template.data.lastTurn == true) {
+			Meteor.call('endRoundEmptyDeck', template.data._id);
+		}
 	}
 });
 
@@ -211,6 +220,11 @@ Template.priestModal.events({
 		Meteor.call('playCard', template.data._id, Meteor.userId(), priest, 0, targetPlayerId, function (error, result) {
 	        Session.set("result",result);
 	    });
+
+	    if (template.data.lastTurn == true) {
+	    	$('#priestModal').modal('hide');
+			Meteor.call('endRoundEmptyDeck', template.data._id);
+		}
 	},
 	'click #priestok' : function () {
 		delete Session.keys['result'];
@@ -266,6 +280,10 @@ Template.princeModal.events({
 			
 		Meteor.call('playCard', template.data._id, Meteor.userId(), prince, 0, targetPlayerId);
 		$('#princeModal').modal('hide');
+
+		if (template.data.lastTurn == true) {
+			Meteor.call('endRoundEmptyDeck', template.data._id);
+		}
 	}
 });
 
@@ -295,5 +313,9 @@ Template.kingModal.events({
 		Meteor.call('playCard', template.data._id, Meteor.userId(), king, 0, targetPlayerId);
 		document.getElementById("kingform").reset();
 		$('#kingModal').modal('hide');
+
+		if (template.data.lastTurn == true) {
+			Meteor.call('endRoundEmptyDeck', template.data._id);
+		}
 	}
 });
