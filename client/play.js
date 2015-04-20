@@ -238,10 +238,10 @@ Template.guardModal.events({
 	'submit form' : function (evt,template) {
 		var data = $("#guardform :input").serializeArray();
 		var targetPlayerId = data[0].value,
-			card = {"type":data[1].name,"value":data[1].value},
+			cardType = data[1].value,
 			guard = {"type":"Guard","value":"1"};
 			
-		Meteor.call('playCard', template.data._id, Meteor.userId(), guard, card, targetPlayerId);
+		Meteor.call('playCard', template.data._id, Meteor.userId(), guard, cardType, targetPlayerId);
 		evt.preventDefault();
 		document.getElementById("guardform").reset();
 		

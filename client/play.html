@@ -296,54 +296,38 @@
 	      	<form id="guardform">
 	      		<div class="form-group" >
 	      			<label for="playerselector">Select a player</label>
-		      		<div id="playerselector">
+		      		<div id="playerselector" class="btn-group" data-toggle="buttons">
 		      			{{#each otherPlayers}}
-		      			<div class="radio {{#if protected .. this}}disabled{{/if}}">
-			                <label>
-			                    {{#if protected .. this}}<input type="radio" value="{{this}}" name="{{username this}}" id="{{this}}" required disabled/>{{else}}<input type="radio" value="{{this}}" name="{{username this}}" id="{{this}}"/>{{/if}} {{username this}}{{#if protected .. this}} (protected by Handmaid){{/if}}
+			                <label class="btn btn-default">
+			                    {{#if protected .. this}}<input type="radio" value="{{this}}" name="target" id="{{this}}" required disabled/>{{else}}<input type="radio" value="{{this}}" name="target" id="{{this}}" required/>{{/if}} {{username this}}{{#if protected .. this}} (protected by Handmaid){{/if}}
 			                </label>
-		                </div>
 		                {{/each}}
 		            </div>
 		        </div>
 		        <div class="form-group" >
 	      			<label for="cardselector">What card do they have?</label>
-		      		<div id="cardselector">
-		      			<div class="radio">
-		      				<label>
-		      					<input type="radio" name="Priest" id="Priest" value="2" /> Priest
+		      		<div id="cardselector" class="btn-group" data-toggle="buttons">
+		      				<label class="btn btn-default">
+		      					<input type="radio" name="cardselect" id="Priest" value="Priest" required/> Priest
 		      				</label>
-		      			</div>
-		      			<div class="radio">
-		      				<label>
-		      					<input type="radio" name="Baron" id="Baron" value="3" /> Baron
+		      				<label class="btn btn-default">
+		      					<input type="radio" name="cardselect" id="Baron" value="Baron" required/> Baron
 		      				</label>
-		      			</div>
-		      			<div class="radio">
-		      				<label>
-		      					<input type="radio" name="Handmaid" id="Handmaid" value="4" /> Handmaid
+		      				<label class="btn btn-default">
+		      					<input type="radio" name="cardselect" id="Handmaid" value="Handmaid" required/> Handmaid
 		      				</label>
-		      			</div>
-		      			<div class="radio">
-		      				<label>
-		      					<input type="radio" name="Prince" id="Prince" value="5" /> Prince
+		      				<label class="btn btn-default">
+		      					<input type="radio" name="cardselect" id="Prince" value="Prince" required/> Prince
 		      				</label>
-		      			</div>
-		      			<div class="radio">
-		      				<label>
-		      					<input type="radio" name="King" id="King" value="6" /> King
+		      				<label class="btn btn-default">
+		      					<input type="radio" name="cardselect" id="King" value="King" required/> King
 		      				</label>
-		      			</div>
-		      			<div class="radio">
-		      				<label>
-		      					<input type="radio" name="Countess" id="Countess" value="7" /> Countess
+		      				<label class="btn btn-default">
+		      					<input type="radio" name="cardselect" id="Countess" value="Countess" required/> Countess
 		      				</label>
-		      			</div>
-		      			<div class="radio">
-		      				<label>
-		      					<input type="radio" name="Princess" id="Princess" value="8" /> Princess
+		      				<label class="btn btn-default">
+		      					<input type="radio" name="cardselect" id="Princess" value="Princess" required/> Princess
 		      				</label>
-		      			</div>
 		            </div>
 		        </div>
 		        <button type="submit" class="btn btn-primary">Go!</button>

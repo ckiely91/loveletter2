@@ -248,14 +248,14 @@ Turns.playGuard = function (gameId, id, guess, target) {
 	var game = Games.findOne(gameId),
 		targetHand = game.players[target].hand[0].type;
 
-	if (targetHand === guess.type) {
+	if (targetHand === guess) {
 		console.log("Your opponent has that card!");
-		Turns.log(gameId, s(Meteor.users.findOne(id).username).capitalize().value() + " played a Guard against " + Meteor.users.findOne(target).username + " and guessed " + guess.type + ". They were right!");
+		Turns.log(gameId, s(Meteor.users.findOne(id).username).capitalize().value() + " played a Guard against " + Meteor.users.findOne(target).username + " and guessed " + guess + ". They were right!");
 		Turns.eliminatePlayer(gameId,target);
 		Turns.changeCurrentPlayer(gameId);
 	} else {
     	console.log("Your opponent doesn't have that card!");
-    	Turns.log(gameId, s(Meteor.users.findOne(id).username).capitalize().value() + " played a Guard against " + Meteor.users.findOne(target).username + " and guessed " + guess.type + ". They were wrong.");
+    	Turns.log(gameId, s(Meteor.users.findOne(id).username).capitalize().value() + " played a Guard against " + Meteor.users.findOne(target).username + " and guessed " + guess + ". They were wrong.");
     	Turns.changeCurrentPlayer(gameId);
 	};
 
