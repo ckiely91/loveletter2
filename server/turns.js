@@ -127,7 +127,9 @@ Turns.eliminatePlayer = function (gameId,id) {
 	currentTurn.splice(idIndex,1);
 	Games.update(gameId,{$set:{"currentTurn":currentTurn}});
 	Games.update(gameId,{$push:{"eliminated":id}});
-	Turns.addToDiscard(gameId,id,hand[0])
+	
+	Turns.addToDiscard(gameId,id,hand[0]);
+	
 	Turns.log(gameId, s(Meteor.users.findOne(id).username).capitalize().value() + " was eliminated!")
 
 	if (currentTurn.length == 1) {
@@ -381,7 +383,5 @@ Turns.playPrincess = function (gameId, id, card) {
 	console.log("Discarded Princess");
 	Turns.log(gameId, s(Meteor.users.findOne(id).username).capitalize().value() + " discarded a Princess and was therefore eliminated.");
 
-	Turns.addToDiscard(gameId,id,card);
-	Turns.removeFromHand(gameId,id,card);
 	Turns.eliminatePlayer(gameId,id);
 };
