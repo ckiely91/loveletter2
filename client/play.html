@@ -1,9 +1,11 @@
 <template name="play">
+	{{> gamelogModal}}
 	{{> guardModal}}
 	{{> priestModal}}
 	{{> baronModal}}
 	{{> princeModal}}
 	{{> kingModal}}
+	{{> discardModal}}
 	{{#if inProgress}}
 		{{#if betweenRounds}}
 			{{> betweenRounds}}
@@ -12,56 +14,78 @@
 	 	{{/if}}
 	{{else}}
 		{{#if lobby}}
-			<!-- show lobby stuff here -->
 			{{> lobby}}
 		{{else}}
 			
 		{{/if}}
 	{{/if}}
-	{{> gamelog}}
 </template>
 
 <template name="lobby">
-<h2>Game started by {{username owner}}</h2>
-<h3>Players in game</h3>
-<ul>{{#each currentTurn}}
-	<li>{{username this}}</li>
-	{{/each}}
-</ul>
-{{#if gameFull ..}}
-		Game is full! Waiting on the leader to start the game.
-	{{else}}
-		{{#unless alreadyInGame ..}}
-			<button class="btn btn-default" id="joingame">Join game</button>
-		{{/unless}}
-{{/if}}
-{{#if isOwner ..}}
-	{{#if readyToStart ..}}
-	<button class="btn btn-default" id="startgame">Start game</button>
-	{{else}}
-	Waiting for more players...
-	{{/if}}
-{{/if}}
-
-<div id="invite">
-		Invite players to the game by giving them the following Game ID:
+<div class="row">
+	<div class="col-md-12">
+		<h2>{{username owner}}'s lobby</h2>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-6">
+		<h3>Players in lobby</h3>
+		<ul style="margin-bottom:30px">
+		{{#each currentTurn}}
+			<li>{{username this}}</li>
+		{{/each}}
+		</ul>
+		{{#if gameFull ..}}
+				<p class="lead">Game is full! Waiting on {{username owner}} to start the game.</p>
+			{{else}}
+				{{#if alreadyInGame ..}}
+					{{#unless isOwner ..}}<p class="lead">Waiting on {{username owner}} to start the game.</p>{{/unless}}
+				{{else}}
+				<button class="btn btn-primary" id="joingame">Join this game</button>
+				{{/if}}
+		{{/if}}
+		{{#if isOwner ..}}
+			{{#if readyToStart ..}}
+			<button class="btn btn-primary" id="startgame">Start game</button>
+			{{else}}
+			<p class="lead">Waiting for more players...</p>
+			{{/if}}
+		{{/if}}
+	</div>
+	<div class="col-md-6">
+		<p class="lead">Invite players to the following lobby ID:</p>
 		<input style="width:auto" class="form-control" type="text" value="{{_id}}" readonly>
+	</div>
 </div>
 </template>
 
 <template name="betweenRounds">
-	<button id="startRound">Start new round</button>
+	<div class="row">
+		<div class="col-md-12">
+			<h2>Round finished</h2>
+			<button id="startRound" class="btn btn-primary">Start new round</button>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			{{> scores}}
+		</div>
+		<div class="col-md-6">
+			{{> gamelog}}
+		</div>
+	</div>
+	
 </template>
 
 <template name="scores">
 <div id="scores">
-	<h2>Scores</h2>
+	<h3>Scores</h3>
 	<table class="table">
 	<thead>
 	<tr><th>Username</th><th>Score</th></tr>
 	</thead>
 	<tbody>
-		{{#each scores}}
+		{{#each sortArray scores "score" true}}
 			<tr><td>{{username this.id}}</td><td>{{this.score}}</td></tr>
 		{{/each}}
 	</tbody>
@@ -77,21 +101,46 @@
 		<div class="col-md-6">
 			{{> playerTurn}}
 			{{#if eliminated}}{{> eliminatedPlayers}}{{/if}}
-			{{#if protected}}{{> protectedPlayers}}{{/if}}
+			{{#if faceup}}{{> faceupCards}}{{/if}}
 		</div>
 	</div>
-	{{> deck}}
-	{{> discard}}
-	{{#unless isEliminated}}{{> hand}}{{/unless}}
+	<div class="row">
+		<div class="col-md-6">
+			<div class="row">
+				<div class="col-xs-4">
+					{{> deck}}
+				</div>
+				{{#unless isEliminated}}
+				<div class="col-xs-8">
+					{{> hand}}
+				</div>
+				{{/unless}}
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+				<h3>Discards</h3>
+				<button id="viewDiscards" class="btn btn-default">View discards</button>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			{{> gamelog}}
+		</div>
+	</div>
+	<div class="row">
+	<div class="col-md-6">
+		{{> cardList}}
+	</div>
+	</div>
 </template>
 
 <template name="playerTurn">
 <div id="playerturn">
-<h2>Current turn</h2>
+<h3>Current turn</h3>
 <ul>
 	{{#each currentTurn}}
-		<li>
-			{{username this}}
+		<li class="{{#if protected .. this}}protected{{/if}}">
+			{{username this}} {{#if protected .. this}}(protected by Handmaid){{/if}}
 		</li>
 	{{/each}}
 </ul>
@@ -107,28 +156,29 @@
 </ul>
 </template>
 
-<template name="protectedPlayers">
-<h3>Protected by Handmaid</h3>
+<template name="faceupCards">
+<h3>Faceup cards removed from deck</h3>
 <ul>
-{{#each protected}}
-	<li>{{username this}}</li>
+{{#each faceup}}
+	<li>{{this.type}}</li>
 {{/each}}
 </ul>
 </template>
 
 <template name="deck">
 	<div id="deck">
-		<h2>Deck</h2>
+		<h3>Deck</h3>
 			<div class="card deck">
 				<div></div>
 				<div>Deck</div>
+				<div class="cardsleft"><p>{{cardsLeftCount}}</p></div>
 			</div>
 	</div>
 </template>
 
 <template name="hand">
 	<div id="hand">
-		<h2>Hand</h2>
+		<h3>Your hand</h3>
 		{{#each player.hand}}
 			<div class="card {{type}}">
 				<div>{{value}}</div>
@@ -138,23 +188,84 @@
 	</div>
 </template>
 
-<template name="discard">
-<div id="discard">
-	<h2>Discard</h2>
-	<div class="card {{lastDiscarded.type}}">
-		<div>{{lastDiscarded.value}}</div>
-		<div>{{#if lastDiscarded.type}}{{lastDiscarded.type}}{{else}}Discards{{/if}}</div>
+<template name="discardModal">
+	<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="discardModal" aria-hidden="true" id="discardModal">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+	        <h4 class="modal-title" id="discardModal">Discarded cards<a class="anchorjs-link" href="#discardModal"><span class="anchorjs-icon"></span></a></h4>
+	      </div>
+	      <div class="modal-body">
+	      <table class="table">
+		      <thead>
+		      <tr>
+			    <th>Username</th>
+			    <th>Card</th>
+		      </tr>
+		      </thead>
+		      <tbody>
+		      {{#each discards}}
+		      <tr>
+		      	<td>{{username this.id}}</td>
+		      	<td>{{this.type}}</td>
+		      </tr>
+		      {{/each}}
+		      </tbody>
+	      </table>
+	      </div>
+	    </div>
 	</div>
+</div>
+
+
+
+</template>
+
+<template name="cardList">
+<div id="cardlist">
+	<h3>List of cards</h3>
+	<ul class="cardlist">
+		<li><strong>8 - Princess</strong> (1)<br><span>Lose if discarded.</span></li>
+		<li><strong>7 - Countess</strong> (1)<br><span>Discard if caught with King or Prince.</span></li>
+		<li><strong>6 - King</strong> (1)<br><span>Trade hands.</span></li>	
+		<li><strong>5 - Prince</strong> (2)<br><span>One player discards his or her hand.</span></li>
+		<li><strong>4 - Handmaid</strong> (2)<br><span>Protection until your next turn.</span></li>
+		<li><strong>3 - Baron</strong> (2)<br><span>Compare hands; lower hand is out.</span></li>
+		<li><strong>2 - Priest</strong> (2)<br><span>Look at another player's hand.</span></li>
+		<li><strong>1 - Guard</strong> (5)<br><span>Name a card other than Guard. If the player has that card, they are out.</span></li>
+	</ul>
 </div>
 </template>
 
 <template name="gamelog">
-	<h2>Game log</h2>
+	<h3>Game log</h3>
 	<ul>
 	{{#each gamelog}}
-		<li>{{friendlytime time}}: {{message}}</li>
+		<li><em>{{friendlytime time}}</em>: {{message}}</li>
 	{{/each}}
 	</ul>
+	<button class="btn btn-default" id="viewLog">View full game log</button>
+</template>
+
+<template name="gamelogModal">
+		<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gamelogModal" aria-hidden="true" id="gamelogModal">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+		        <h4 class="modal-title" id="gamelogModal">Full game log<a class="anchorjs-link" href="#gamelogModal"><span class="anchorjs-icon"></span></a></h4>
+		      </div>
+		      <div class="modal-body">
+		      	<ul>
+		      	{{#each gamelog}}
+		      		<li><em>{{friendlytime time}}</em>: {{message}}</li>
+		      	{{/each}}
+		      	</ul>
+		      </div>
+		    </div>
+		</div>
+	</div>
 </template>
 
 <template name="guardModal">
@@ -169,38 +280,54 @@
 	      	<form id="guardform">
 	      		<div class="form-group" >
 	      			<label for="playerselector">Select a player</label>
-		      		<div class="btn-group" id="playerselector" data-toggle="buttons" >
+		      		<div id="playerselector">
 		      			{{#each otherPlayers}}
-		                <label class="btn btn-default {{#if protected .. this}}disabled{{/if}}">
-		                    <input type="radio" value="{{this}}" name="{{username this}}" id="{{this}}" class="sr-only" /> {{username this}}{{#if protected .. this}} (protected by Handmaid){{/if}}
-		                </label>
+		      			<div class="radio {{#if protected .. this}}disabled{{/if}}">
+			                <label>
+			                    {{#if protected .. this}}<input type="radio" value="{{this}}" name="{{username this}}" id="{{this}}" required disabled/>{{else}}<input type="radio" value="{{this}}" name="{{username this}}" id="{{this}}"/>{{/if}} {{username this}}{{#if protected .. this}} (protected by Handmaid){{/if}}
+			                </label>
+		                </div>
 		                {{/each}}
 		            </div>
 		        </div>
 		        <div class="form-group" >
 	      			<label for="cardselector">What card do they have?</label>
-		      		<div class="btn-group" id="cardselector" data-toggle="buttons">
-		                <label class="btn btn-default">
-		                    <input type="radio" value="2" name="Priest" id="Priest" class="sr-only"/> Priest
-		                </label>
-		                <label class="btn btn-default">
-		                    <input type="radio" value="3" name="Baron" id="Baron" class="sr-only"/> Baron
-		                </label>
-		                <label class="btn btn-default">
-		                    <input type="radio" value="4" name="Handmaid" id="Handmaid" class="sr-only"/> Handmaid
-		                </label>
-		                <label class="btn btn-default">
-		                    <input type="radio" value="5" name="Prince" id="Prince" class="sr-only"/> Prince
-		                </label>
-		                <label class="btn btn-default">
-		                    <input type="radio" value="6" name="King" id="King" class="sr-only"/> King
-		                </label>
-		                <label class="btn btn-default">
-		                    <input type="radio" value="7" name="Countess" id="Countess" class="sr-only"/> Countess
-		                </label>
-		                <label class="btn btn-default">
-		                    <input type="radio" value="8" name="Princess" id="Princess" class="sr-only"/> Princess
-		                </label>
+		      		<div id="cardselector">
+		      			<div class="radio">
+		      				<label>
+		      					<input type="radio" name="Priest" id="Priest" value="2" /> Priest
+		      				</label>
+		      			</div>
+		      			<div class="radio">
+		      				<label>
+		      					<input type="radio" name="Baron" id="Baron" value="3" /> Baron
+		      				</label>
+		      			</div>
+		      			<div class="radio">
+		      				<label>
+		      					<input type="radio" name="Handmaid" id="Handmaid" value="4" /> Handmaid
+		      				</label>
+		      			</div>
+		      			<div class="radio">
+		      				<label>
+		      					<input type="radio" name="Prince" id="Prince" value="5" /> Prince
+		      				</label>
+		      			</div>
+		      			<div class="radio">
+		      				<label>
+		      					<input type="radio" name="King" id="King" value="6" /> King
+		      				</label>
+		      			</div>
+		      			<div class="radio">
+		      				<label>
+		      					<input type="radio" name="Countess" id="Countess" value="7" /> Countess
+		      				</label>
+		      			</div>
+		      			<div class="radio">
+		      				<label>
+		      					<input type="radio" name="Princess" id="Princess" value="8" /> Princess
+		      				</label>
+		      			</div>
 		            </div>
 		        </div>
 		        <button type="submit" class="btn btn-primary">Go!</button>
@@ -227,15 +354,14 @@
 	      	<form id="priestform">
 	      		<div class="form-group" >
 	      			<label for="playerselector">Select a player</label>
-		      		<div class="btn-group" id="playerselector" data-toggle="buttons" >
-		      			{{#each otherPlayers}}
-		                <label class="btn btn-default {{#if protected .. this}}disabled{{/if}}">
-		                    <input type="radio" value="{{this}}" name="{{username this}}" id="{{this}}" class="sr-only" /> {{username this}}{{#if protected .. this}} (protected by Handmaid){{/if}}
-		                </label>
-		                {{/each}}
+		      		<div class="btn-group" id="playerselector">
+		      		{{#each otherPlayers}}
+		      		{{#if protected .. this}}<button type="button" class="btn btn-default priestbutton" value="{{this}}" name="{{username this}}" id="{{this}}" disabled>{{username this}} (protected by Handmaid)</button> 
+		      			{{else}}
+		      			<button type="button" class="btn btn-default priestbutton" value="{{this}}" name="{{username this}}" id="{{this}}">{{username this}}</button>{{/if}}
+		      		{{/each}}
 		            </div>
 		        </div>
-		        <button type="submit" class="btn btn-primary">Go!</button>
 	      	</form>
 	      	{{/if}}
 	      </div>
@@ -258,13 +384,12 @@
 	      			<label for="playerselector">Select a player</label>
 		      		<div class="btn-group" id="playerselector" data-toggle="buttons" >
 		      			{{#each otherPlayers}}
-		                <label class="btn btn-default {{#if protected .. this}}disabled{{/if}}">
-		                    <input type="radio" value="{{this}}" name="{{username this}}" id="{{this}}" class="sr-only" /> {{username this}}{{#if protected .. this}} (protected by Handmaid){{/if}}
-		                </label>
-		                {{/each}}
+		      			{{#if protected .. this}}<button type="button" class="btn btn-default baronbutton" value="{{this}}" name="{{username this}}" id="{{this}}" disabled>{{username this}} (protected by Handmaid)</button> 
+		      			{{else}}
+		      			<button type="button" class="btn btn-default baronbutton" value="{{this}}" name="{{username this}}" id="{{this}}">{{username this}}</button>{{/if}}
+		      			{{/each}}
 		            </div>
 		        </div>
-		        <button type="submit" class="btn btn-primary">Go!</button>
 	      	</form>
 	      </div>
 	    </div>
@@ -286,13 +411,12 @@
 	      			<label for="playerselector">Select a player</label>
 		      		<div class="btn-group" id="playerselector" data-toggle="buttons" >
 		      			{{#each currentTurn}}
-		                <label class="btn btn-default {{#if protected .. this}}disabled{{/if}}">
-		                    <input type="radio" value="{{this}}" name="{{username this}}" id="{{this}}" class="sr-only" /> {{username this}}{{#if protected .. this}} (protected by Handmaid){{/if}}
-		                </label>
+		      			{{#if protected .. this}}<button type="button" class="btn btn-default princebutton" value="{{this}}" name="{{username this}}" id="{{this}}" disabled>{{username this}} (protected by Handmaid)</button> 
+		      			{{else}}
+		      			<button type="button" class="btn btn-default princebutton" value="{{this}}" name="{{username this}}" id="{{this}}">{{username this}}</button>{{/if}}
 		                {{/each}}
 		            </div>
 		        </div>
-		        <button type="submit" class="btn btn-primary">Go!</button>
 	      	</form>
 	      </div>
 	    </div>
@@ -314,13 +438,12 @@
 	      			<label for="playerselector">Select a player</label>
 		      		<div class="btn-group" id="playerselector" data-toggle="buttons" >
 		      			{{#each otherPlayers}}
-		                <label class="btn btn-default {{#if protected .. this}}disabled{{/if}}">
-		                    <input type="radio" value="{{this}}" name="{{username this}}" id="{{this}}" class="sr-only" /> {{username this}}{{#if protected .. this}} (protected by Handmaid){{/if}}
-		                </label>
+		                {{#if protected .. this}}<button type="button" class="btn btn-default kingbutton" value="{{this}}" name="{{username this}}" id="{{this}}" disabled>{{username this}} (protected by Handmaid)</button> 
+		      			{{else}}
+		      			<button type="button" class="btn btn-default kingbutton" value="{{this}}" name="{{username this}}" id="{{this}}">{{username this}}</button>{{/if}}
 		                {{/each}}
 		            </div>
 		        </div>
-		        <button type="submit" class="btn btn-primary">Go!</button>
 	      	</form>
 	      </div>
 	    </div>

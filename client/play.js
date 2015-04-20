@@ -48,7 +48,22 @@ Template.betweenRounds.events({
 
 Template.gamelog.helpers({
 	gamelog : function() {
-		return this.log.slice(-10).reverse();
+		return this.log.slice(-8).reverse();
+	},
+	friendlytime : function(time) {
+		return moment(time).fromNow();
+	}
+});
+
+Template.gamelog.events({
+	'click #viewLog' : function() {
+		$('#gamelogModal').modal();
+	}
+});
+
+Template.gamelogModal.helpers({
+	gamelog : function() {
+		return this.log.slice().reverse();
 	},
 	friendlytime : function(time) {
 		return moment(time).fromNow();
@@ -64,6 +79,40 @@ Template.game.helpers({
 		}
 	}
 });
+
+Template.game.events({
+	'click #viewDiscards' : function() {
+		$('#discardModal').modal();
+	}
+});
+
+Template.playerTurn.helpers({
+	protected : function (parentContext, id) {
+		var protected = parentContext.protected;
+		if (protected.indexOf(id) > -1) {
+			return true;
+		} else { return false;}
+	}
+})
+
+Template.deck.helpers({
+	cardsLeft : function () {
+		var deck = this.deck;
+
+		if (deck.length == 0) {
+			return "No cards left";
+		} else if (deck.length == 1) {
+			return "1 card left";
+		} else {
+			return deck.length + " cards left.";
+		}
+	},
+	cardsLeftCount: function () {
+		return this.deck.length;
+	}
+})
+
+
 
 Template.deck.events({
 	'click .card': function (evt, template) {
@@ -98,7 +147,7 @@ Template.hand.events({
 
 		if (game.yourTurn) {
 				if (game.players[Meteor.userId()].hand.length <= 1) {
-					alert("You need to draw a card first.");
+					alert("Click the deck to draw a card first.");
 				} else {
 					if (this.type === "Guard") {
 						if (allPlayersProtected == true) {
@@ -158,6 +207,18 @@ Template.hand.events({
 	}
 });
 
+Template.discardModal.helpers({
+	discardCards: function (parentContext)  {
+		var result = [];
+
+		for (var i = parentContext.players.length - 1; i >= 0; i--) {
+			result.push(parentContext.discards[i].discards);
+		};
+
+		return result;
+	}
+})
+
 Template.guardModal.helpers({
 	otherPlayers : function () {
 			var otherplayers = this.currentTurn.slice(),
@@ -213,12 +274,10 @@ Template.priestModal.helpers({
 
 
 Template.priestModal.events({
-	'submit form' : function (evt,template) {
-		evt.preventDefault();
-		var data = $("#priestform :input").serializeArray();
-		var targetPlayerId = data[0].value,
+	'click .priestbutton' : function (evt,template) {
+		var targetPlayerId = evt.target.value,
 			priest = {"type":"Priest","value":"2"};
-			
+		
 		Meteor.call('playCard', template.data._id, Meteor.userId(), priest, 0, targetPlayerId, function (error, result) {
 	        Session.set("result",result);
 	    });
@@ -251,10 +310,8 @@ Template.baronModal.helpers({
 
 
 Template.baronModal.events({
-	'submit form' : function (evt,template) {
-		evt.preventDefault();
-		var data = $("#baronform :input").serializeArray();
-		var targetPlayerId = data[0].value,
+	'click .baronbutton' : function (evt,template) {
+		var targetPlayerId = evt.target.value,
 			baron = {"type":"Baron","value":"3"};
 			
 		Meteor.call('playCard', template.data._id, Meteor.userId(), baron, 0, targetPlayerId);
@@ -274,10 +331,8 @@ Template.princeModal.helpers({
 
 
 Template.princeModal.events({
-	'submit form' : function (evt,template) {
-		evt.preventDefault();
-		var data = $("#princeform :input").serializeArray();
-		var targetPlayerId = data[0].value,
+	'click .princebutton' : function (evt,template) {
+		var targetPlayerId = evt.target.value,
 			prince = {"type":"Prince","value":"5"};
 			
 		Meteor.call('playCard', template.data._id, Meteor.userId(), prince, 0, targetPlayerId);
@@ -307,10 +362,8 @@ Template.kingModal.helpers({
 
 
 Template.kingModal.events({
-	'submit form' : function (evt,template) {
-		evt.preventDefault();
-		var data = $("#kingform :input").serializeArray();
-		var targetPlayerId = data[0].value,
+	'click .kingbutton' : function (evt,template) {
+		var targetPlayerId = evt.target.value,
 			king = {"type":"King","value":"6"};
 			
 		Meteor.call('playCard', template.data._id, Meteor.userId(), king, 0, targetPlayerId);

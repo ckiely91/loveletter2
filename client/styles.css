@@ -1,3 +1,17 @@
+ul {
+	list-style-type: none;
+	padding-left:10px;
+}
+
+ul li {
+	border-bottom: 1px solid #999;
+	padding: 4px 0;
+}
+
+li span {
+	font-size: 90%;
+}
+
 .card {
 	background: #fff;
 	border: 1px solid #000;
@@ -42,11 +56,30 @@
 	transform: rotate(10deg);
 }
 
-#deck, #discard {
-	min-height:250px;
-	display:inline-block;
-}
-
 #playerturn ul li:nth-of-type(1) {
 	font-weight:bold;
+}
+
+#playerturn ul li:nth-of-type(1) ~ li {
+	margin-left:20px;
+	opacity:0.8;
+}
+
+#playerturn ul li.protected {
+	color:rgb(102, 133, 255);
+}
+
+div.cardsleft {
+	background: rgb(255, 39, 0);
+	/* padding: 6px; */
+	border-radius: 20px;
+	width: 30px;
+	height: 30px;
+	margin-left: 93px;
+	margin-top: -30px;
+}
+
+div.cardsleft p {
+	padding-top:5px;
+	color:white;
 }

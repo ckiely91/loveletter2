@@ -16,9 +16,9 @@ Turns.removeTopOfDeck = function (gameId) {
 };
 
 Turns.addToDiscard = function (gameId, id, card) {
-	var object = {};
-		object["players." + id + ".discard"] = card;
-	Games.update(gameId, {$set: object});
+
+	Games.update(gameId, {$push: {"discards": {"id":id,"type":card.type}}});
+
 	Games.update(gameId, {$set: {"lastDiscarded":card}});
 };
 
@@ -47,6 +47,7 @@ Turns.discardHandAndDrawNewCard = function (gameId, id) {
 	var game = Games.findOne(gameId);
 		card = game.players[id].hand[0];
 
+
 	if (card.value == 8) {
 		Turns.playPrincess(gameId,id,card);
 	} else if (game.deck.length < 1) {
@@ -54,6 +55,7 @@ Turns.discardHandAndDrawNewCard = function (gameId, id) {
 		object["players." + id + ".hand"] = {};
 		Games.update(gameId, {$pull: object});
 		Turns.addCardToHand(gameId, id, game.facedown[0]);
+		Turns.addToDiscard(gameId,id,card);
 		Turns.log(gameId, s(Meteor.users.findOne(id).username).capitalize().value() + " discarded a " + card.type + ".")
 		Turns.log(gameId, "The deck was empty so " + Meteor.users.findOne(id) + " drew the facedown card.")
 	} else {
@@ -64,6 +66,7 @@ Turns.discardHandAndDrawNewCard = function (gameId, id) {
 		var game = Games.findOne(gameId),
 			newCard = game.deck[0];
 	
+		Turns.addToDiscard(gameId,id,card);
 		Turns.removeTopOfDeck(gameId);
 		Turns.addCardToHand(gameId,id,newCard);
 	
@@ -118,11 +121,13 @@ Turns.changeCurrentPlayer = function (gameId) {
 Turns.eliminatePlayer = function (gameId,id) {
 	var game = Games.findOne(gameId),
 		currentTurn = game.currentTurn,
+		hand = game.players[id].hand,
 		idIndex = currentTurn.indexOf(id);
 
 	currentTurn.splice(idIndex,1);
 	Games.update(gameId,{$set:{"currentTurn":currentTurn}});
 	Games.update(gameId,{$push:{"eliminated":id}});
+	Turns.addToDiscard(gameId,id,hand[0])
 	Turns.log(gameId, s(Meteor.users.findOne(id).username).capitalize().value() + " was eliminated!")
 
 	if (currentTurn.length == 1) {

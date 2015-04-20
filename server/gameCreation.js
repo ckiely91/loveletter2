@@ -40,7 +40,7 @@ GameFactory.createFirstRound = function (gameId, firstPlayer) {
 		inProgress: true,
 		lobby: false,
 		protected: [],
-		scores: scores
+		scores: scores,
 	}
 };
 
@@ -81,6 +81,7 @@ GameFactory.createNewRound = function (gameId,winner) {
 		lastTurn: false,
 		betweenRounds: false,
 		lastRoundWinner: 0,
+		discards: []
 	}
 }
 
