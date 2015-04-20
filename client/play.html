@@ -16,7 +16,7 @@
 		{{#if lobby}}
 			{{> lobby}}
 		{{else}}
-			
+			{{> endGame}}
 		{{/if}}
 	{{/if}}
 </template>
@@ -54,7 +54,7 @@
 	</div>
 	<div class="col-md-6">
 		<p class="lead">Invite players to the following lobby ID:</p>
-		<input style="width:auto" class="form-control" type="text" value="{{_id}}" readonly>
+		<input style="width:auto" class="form-control" type="text" value="{{_id}}" readonly />
 	</div>
 </div>
 </template>
@@ -62,7 +62,7 @@
 <template name="betweenRounds">
 	<div class="row">
 		<div class="col-md-12">
-			<h2>Round finished</h2>
+			<h2>{{#if lastRoundWinner}}{{username lastRoundWinner}} won the round!{{else}}It's a tie!{{/if}}</h2>
 			<button id="startRound" class="btn btn-primary">Start new round</button>
 		</div>
 	</div>
@@ -75,6 +75,22 @@
 		</div>
 	</div>
 	
+</template>
+	
+<template name="endGame">
+	<div class="row">
+		<div class="col-md-12">
+			<h2>{{username bigWinner}} won the game!</h2>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			{{> scores}}
+		</div>
+		<div class="col-md-6">
+			{{> gamelog}}
+		</div>
+	</div>
 </template>
 
 <template name="scores">

@@ -131,6 +131,8 @@ Turns.eliminatePlayer = function (gameId,id) {
 	Turns.log(gameId, s(Meteor.users.findOne(id).username).capitalize().value() + " was eliminated!")
 
 	if (currentTurn.length == 1) {
+		var winner = currentTurn[0];
+		Turns.log(gameId, s(Meteor.users.findOne(winner).username).capitalize().value() + " is the last player remaining.");
 		Turns.endRound(gameId);
 	} 
 }
@@ -143,6 +145,7 @@ Turns.endRound = function (gameId,win,tie) {
 	} else if (tie) {
 		Turns.log(gameId, "There was a tie.");
 		Games.update(gameId,{$set:{"betweenRounds":true}});
+		Games.update(gameId, {$set:{"lastRoundWinner":0}});
 		return;
 	} else {
 		// must be only one player left
@@ -155,6 +158,27 @@ Turns.endRound = function (gameId,win,tie) {
 	Games.update(gameId,{$set:{"betweenRounds":true}});
 	Games.update(gameId, {$set:{"lastRoundWinner":winner}});
 
+	//did someone win it ALL??
+	game = Games.findOne(gameId);
+	var playerNo = game.currentTurn.length + game.eliminated.length;
+	if (playerNo == 2) {
+		var pointsNeeded = 7;
+	} else if (playerNo == 3) {
+		var pointsNeeded = 5;
+	} else if (playerNo == 4) {
+		var pointsNeeded = 4;
+	}
+
+	for (var i = game.scores.length - 1; i >= 0; i--) {
+		if (game.scores[i].score >= pointsNeeded) {
+			Turns.endGame(gameId,game.scores[i].id);
+		}
+	};
+}
+
+Turns.endGame = function (gameId, winner) {
+	Games.update(gameId, {$set:{"inProgress":false}});
+	Games.update(gameId, {$set:{"bigWinner":winner}});
 }
 
 Turns.endRoundEmptyDeck = function(gameId) {
