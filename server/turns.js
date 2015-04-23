@@ -310,6 +310,13 @@ Turns.playBaron = function (gameId, id, target, card) {
 	} else if (userHand < opponentHand) {
 		Turns.log(gameId, Meteor.users.findOne(id).username + " played a Baron against " + Meteor.users.findOne(target).username + " and " + Meteor.users.findOne(target).username + " had the high card. " + s(Meteor.users.findOne(id).username).capitalize().value() + " had a " + userHandType + ".");
 		Turns.eliminatePlayer(gameId,id);
+		game = Games.findOne(gameId);
+		var newCurrentPlayer = game.currentTurn[0];
+		var newCurrentPlayerProtected = Turns.isProtected(game,newCurrentPlayer);
+
+		if (newCurrentPlayerProtected == true) {
+			Games.update(gameId, {$pull: {protected:newCurrentPlayer}});
+		}; 
 	} else {
 		console.log("Cards were equal!");
 		Turns.log(gameId, Meteor.users.findOne(id).username + " played a Baron but both cards were equal.");

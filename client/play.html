@@ -60,6 +60,7 @@
 </template>
 
 <template name="betweenRounds">
+	{{> betweenRoundsSound lastRoundWinner}}
 	<div class="row">
 		<div class="col-md-12">
 			<h2>{{#if lastRoundWinner}}{{username lastRoundWinner}} won the round!{{else}}It's a tie!{{/if}}</h2>
@@ -74,10 +75,13 @@
 			{{> gamelog}}
 		</div>
 	</div>
-	
+</template>
+
+<template name="betweenRoundsSound">
 </template>
 	
 <template name="endGame">
+	{{> endGameSound bigWinner}}
 	<div class="row">
 		<div class="col-md-12">
 			<h2>{{username bigWinner}} won the game!</h2>
@@ -91,6 +95,9 @@
 			{{> gamelog}}
 		</div>
 	</div>
+</template>
+
+<template name="endGameSound">
 </template>
 
 <template name="scores">
@@ -110,44 +117,50 @@
 </template>
 
 <template name="game">
-	<div class="row">
-		<div class="col-md-6">
-			{{> scores}}
-		</div>
-		<div class="col-md-6">
-			{{> playerTurn}}
-			{{#if eliminated}}{{> eliminatedPlayers}}{{/if}}
-			{{#if faceup}}{{> faceupCards}}{{/if}}
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-6">
-			<div class="row">
-				<div class="col-xs-4">
-					{{> deck}}
-				</div>
-				{{#unless isEliminated}}
-				<div class="col-xs-8">
-					{{> hand}}
-				</div>
-				{{/unless}}
+	{{#if yourTurn}}{{> yourTurnSound}}{{/if}}
+	<div class="container {{#if yourTurn}}yourturn{{/if}}">
+		<div class="row">
+			<div class="col-md-6">
+				{{> scores}}
 			</div>
-			<div class="row">
-				<div class="col-md-12">
-				<h3>Discards</h3>
-				<button id="viewDiscards" class="btn btn-default">View discards</button>
-				</div>
+			<div class="col-md-6">
+				{{> playerTurn}}
+				{{#if eliminated}}{{> eliminatedPlayers}}{{/if}}
+				{{#if faceup}}{{> faceupCards}}{{/if}}
 			</div>
 		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="row">
+					<div class="col-xs-4">
+						{{> deck}}
+					</div>
+					{{#unless isEliminated}}
+					<div class="col-xs-8">
+						{{> hand}}
+					</div>
+					{{/unless}}
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+					<h3>Discards</h3>
+					<button id="viewDiscards" class="btn btn-default">View discards</button>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				{{> gamelog}}
+			</div>
+		</div>
+		<div class="row">
 		<div class="col-md-6">
-			{{> gamelog}}
+			{{> cardList}}
+		</div>
 		</div>
 	</div>
-	<div class="row">
-	<div class="col-md-6">
-		{{> cardList}}
-	</div>
-	</div>
+</template>
+
+<template name="yourTurnSound">
 </template>
 
 <template name="playerTurn">

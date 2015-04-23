@@ -46,6 +46,24 @@ Template.betweenRounds.events({
 })
 
 
+
+Template.endGame.helpers({
+	sound : function() {
+		if (this.inProgress == false && this.betweenRounds != true) {
+			if (this.bigWinner === Meteor.userId()) {
+				var winSound = new buzz.sound("/audio/round-win", { formats: ["ogg", "mp3"]});
+				winSound.play();
+			} else {
+				var loseSound = new buzz.sound("/audio/round-lose", { formats: ["ogg", "mp3"]});
+				loseSound.play();
+			}
+		}
+	}
+})
+
+
+
+
 Template.gamelog.helpers({
 	gamelog : function() {
 		return this.log.slice(-8).reverse();
@@ -376,3 +394,30 @@ Template.kingModal.events({
 		$('#kingModal').modal('hide');
 	}
 });
+
+Template.betweenRoundsSound.rendered = function() {
+		if (this.data === Meteor.userId()) {
+			var winSound = new buzz.sound("/audio/round-win", { formats: ["ogg", "mp3"]});
+			winSound.play();
+		} else {
+			var loseSound = new buzz.sound("/audio/round-lose", { formats: ["ogg", "mp3"]});
+			loseSound.play();
+		}
+		
+};
+
+Template.endGameSound.rendered = function() {
+		if (this.data === Meteor.userId()) {
+			var winSound = new buzz.sound("/audio/round-win", { formats: ["ogg", "mp3"]});
+			winSound.play();
+		} else {
+			var loseSound = new buzz.sound("/audio/round-lose", { formats: ["ogg", "mp3"]});
+			loseSound.play();
+		}
+		
+};
+
+Template.yourTurnSound.rendered = function() {
+			var sound = new buzz.sound("/audio/your-turn", { formats: ["ogg", "mp3"]});
+			sound.play();		
+};
