@@ -6,6 +6,7 @@
 	{{> princeModal}}
 	{{> kingModal}}
 	{{> discardModal}}
+	{{> howtoplayModal}}
 	{{#if inProgress}}
 		{{#if betweenRounds}}
 			{{> betweenRounds}}
@@ -102,10 +103,10 @@
 
 <template name="scores">
 <div id="scores">
-	<h3>Scores</h3>
+	<h3>Tokens of affection</h3>
 	<table class="table">
 	<thead>
-	<tr><th>Username</th><th>Score</th></tr>
+	<tr><th>Username</th><th>Tokens</th></tr>
 	</thead>
 	<tbody>
 		{{#each sortArray scores "score" true}}
@@ -254,6 +255,7 @@
 <template name="cardList">
 <div id="cardlist">
 	<h3>List of cards</h3>
+	<button id="howtoplay" class="btn btn-default">How to play</button>
 	<ul class="cardlist">
 		<li><strong>8 - Princess</strong> (1)<br><span>Lose if discarded.</span></li>
 		<li><strong>7 - Countess</strong> (1)<br><span>Discard if caught with King or Prince.</span></li>
@@ -290,6 +292,40 @@
 		      	{{#each gamelog}}
 		      		<li><em>{{friendlytime time}}</em>: {{message}}</li>
 		      	{{/each}}
+		      	</ul>
+		      </div>
+		    </div>
+		</div>
+	</div>
+</template>
+
+<template name="howtoplayModal">
+		<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="howtoplayModal" aria-hidden="true" id="howtoplayModal">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+		        <h4 class="modal-title" id="howtoplayModal">How to play Love Letter<a class="anchorjs-link" href="#howtoplayModal"><span class="anchorjs-icon"></span></a></h4>
+		      </div>
+		      <div class="modal-body">
+		      	<h3>Beginning a round</h3>
+		      	When a round begins, all 16 cards of the deck are shuffled and one is removed facedown from the game. The players are all dealt one card and play begins.<br><br>
+		      	<em>In a two-player game only:</em>An additional three cards are removed from the deck and placed faceup in view of all players.
+		      	<h3>Taking a turn</h3>
+		      	On your turn, draw the top card by clicking on the deck. Then click one of the two cards in your hand to discard it. The card's effect will apply immediately, even if it is bad for you.<br>
+		      	Some cards allow you to make additional choices. The full list of cards and their effects are shown in the main game screen.<br>
+		      	Once you have taken your turn, play passes to the next player.
+		      	<h3>Out of the round</h3>
+		      	If a player is knocked out of the round, that player discards their remaining card and takes no more turns until next round.
+		      	<h3>End of a round</h3>
+		      	A round ends if the deck is empty at the end of a turn. All players hands are revealed, and the player with the highest ranked card wins the round.<br>
+		      	The round also ends if all players but one are out of the round, in which case the remaining player wins.<br>
+		      	The winner received a token of affection (1 point). All cards are shuffled and redrawn, and a new round begins. The winner of the previous round goes first.
+		      	<h3>Winning</h3>
+		      	A player wins the game after winning a number of tokens (reaching a score) based on the number of players:
+		      	<ul><li>2 players - 7 tokens</li>
+		      		<li>3 players - 5 tokens</li>
+		      		<li>4 players - 4 tokens</li>
 		      	</ul>
 		      </div>
 		    </div>

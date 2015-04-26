@@ -104,6 +104,12 @@ Template.game.events({
 	}
 });
 
+Template.cardList.events({
+	'click #howtoplay' : function() {
+		$('#howtoplayModal').modal();
+	}
+});
+
 Template.playerTurn.helpers({
 	protected : function (parentContext, id) {
 		var protected = parentContext.protected;
