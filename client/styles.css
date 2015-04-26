@@ -83,3 +83,16 @@ div.cardsleft p {
 	padding-top:5px;
 	color:white;
 }
+
+input#chatinput {
+	width: 100%;
+}
+
+ul.chat {
+	height:395px;
+	overflow:auto;
+}
+
+.spectator {
+	color: #ABABAB;
+}

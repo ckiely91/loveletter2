@@ -190,6 +190,10 @@ Turns.endRoundEmptyDeck = function(gameId) {
 		winners = [],
 		topValue = 0;
 
+	if (game.betweenRounds == true) {
+		return;
+	}
+
 	Turns.log(gameId, "Round finished.")
 
 	for (var i = playerList.length - 1; i >= 0; i--) {
@@ -344,7 +348,6 @@ Turns.playPrince = function (gameId, id, card, target) {
 
 	Turns.addToDiscard(gameId,id,card);
 	Turns.removeFromHand(gameId,id,card);
-	Turns.changeCurrentPlayer(gameId);
 
 	if (target === id) {
 		//current player discards hand and draws new card
@@ -355,6 +358,14 @@ Turns.playPrince = function (gameId, id, card, target) {
 		Turns.log(gameId, s(Meteor.users.findOne(id).username).capitalize().value() + " played a Prince to force " + Meteor.users.findOne(target).username + " to discard their hand.");
 		Turns.discardHandAndDrawNewCard(gameId,target);
 	}
+
+	var game = Games.findOne(gameId);
+	if (game.deck.length > 0) {
+		Turns.changeCurrentPlayer(gameId);
+	} else {
+		Turns.endRoundEmptyDeck(gameId);
+	}
+
 };
 
 Turns.playKing = function (gameId, id, card, target) {

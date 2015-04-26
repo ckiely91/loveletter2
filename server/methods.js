@@ -109,5 +109,9 @@ Meteor.methods({
     },
     endRoundEmptyDeck: function (gameId) {
         Turns.endRoundEmptyDeck(gameId);
+    },
+    newChatMessage: function (gameId, id, message) {
+        var date = new Date();
+        Games.update(gameId, {$push: {chat: {"time":date,"id":id,"message":message}}});
     }
 });

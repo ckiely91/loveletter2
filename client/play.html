@@ -58,6 +58,11 @@
 		<input style="width:auto" class="form-control" type="text" value="{{_id}}" readonly />
 	</div>
 </div>
+<div class="row">
+	<div class="col-md-12">
+	{{> chat}}
+	</div>
+</div>
 </template>
 
 <template name="betweenRounds">
@@ -74,6 +79,11 @@
 		</div>
 		<div class="col-md-6">
 			{{> gamelog}}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			{{> chat}}
 		</div>
 	</div>
 </template>
@@ -94,6 +104,11 @@
 		</div>
 		<div class="col-md-6">
 			{{> gamelog}}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			{{> chat}}
 		</div>
 	</div>
 </template>
@@ -154,9 +169,12 @@
 			</div>
 		</div>
 		<div class="row">
-		<div class="col-md-6">
-			{{> cardList}}
-		</div>
+			<div class="col-md-6">
+				{{> cardList}}
+			</div>
+			<div class="col-md-6">
+				{{> chat}}
+			</div>
 		</div>
 	</div>
 </template>
@@ -297,6 +315,18 @@
 		    </div>
 		</div>
 	</div>
+</template>
+
+<template name="chat">
+	<h3>Chat</h3>
+	<form class="form-inline" id="chatform">
+		<input type="text" class="form-control input-sm" id="chatinput" placeholder="Type chat message">
+	</form>
+	<ul class="chat">
+	{{#each chats}}
+		<li class="{{#unless ingame .. id}}spectator{{/unless}}"><em>{{username id}} {{#unless ingame .. id}}(spectator) {{/unless}}({{friendlytime time}})</em>: {{message}}</li>
+	{{/each}}
+	</ul>
 </template>
 
 <template name="howtoplayModal">

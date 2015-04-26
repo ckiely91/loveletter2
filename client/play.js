@@ -401,6 +401,29 @@ Template.kingModal.events({
 	}
 });
 
+Template.chat.events({
+	'submit #chatform' : function (evt, template) {
+		evt.preventDefault();
+		var message = $("#chatinput").val()
+		Meteor.call('newChatMessage', template.data._id, Meteor.userId(), message);
+		$("#chatinput").val('');
+	}
+});
+
+Template.chat.helpers({
+	chats : function() {
+		console.log(this);
+		return this.chat.reverse();
+	},
+	friendlytime : function(time) {
+		return moment(time).fromNow();
+	},
+	ingame : function(parentContext,id) {
+		var playerList = parentContext.currentTurn;
+		return (playerList.indexOf(id) > -1) ? true : false; 
+	}
+});
+
 Template.betweenRoundsSound.rendered = function() {
 		if (this.data === Meteor.userId()) {
 			var winSound = new buzz.sound("/audio/round-win", { formats: ["ogg", "mp3"]});
